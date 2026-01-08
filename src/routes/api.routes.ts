@@ -29,5 +29,6 @@ const upload = multer({
 
 router.post('/split', upload.single('file'), (req, res) => controller.split(req, res));
 router.post('/compress', upload.single('file'), (req, res) => controller.compress(req, res));
+router.post('/extract-text', upload.single('file'), (req, res) => controller.extractText(req, res));
 
 export default router;
