@@ -19,7 +19,13 @@ const storage: StorageEngine = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const upload = multer({ 
+  storage,
+  limits: {
+    // 500 * 1024 * 1024 = 524,288,000 bytes
+    fileSize: 500 * 1024 * 1024 
+  }
+ });
 
 router.post('/split', upload.single('file'), (req, res) => controller.split(req, res));
 router.post('/compress', upload.single('file'), (req, res) => controller.compress(req, res));
