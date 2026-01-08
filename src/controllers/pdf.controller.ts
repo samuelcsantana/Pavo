@@ -49,6 +49,40 @@ export class PdfController {
   }
 
   /**
+   * Handles PDF Text Extraction
+   * Extracts all text from the uploaded PDF and returns it as a .txt file.
+   */
+  async extractText(req: Request, res: Response): Promise<void> {
+    try {
+      // 1. Validation: Check if file exists
+      if (!req.file) {
+        res.status(400).json({ error: 'No file uploaded.' });
+        return;
+      }
+
+      const inputPath = req.file.path;
+
+      // 2. Process: Call the service
+      const text = await pdfService.extractText(inputPath);
+
+      // 3. Response: Send the text as a file download
+      res.setHeader('Content-Type', 'text/plain');
+      res.setHeader('Content-Disposition', 'attachment; filename=extracted-text.txt');
+      res.send(text);
+
+      // 4. Cleanup: Delete the uploaded temp file
+      await fs.unlink(inputPath);
+
+    } catch (error: any) {
+      console.error('Extract Text Error:', error);
+      res.status(500).json({ error: error.message || 'Internal Server Error' });
+
+      // Cleanup on error
+      if (req.file) await fs.unlink(req.file.path).catch(() => {});
+    }
+  }
+
+  /**
    * Handles PDF Compression
    * Optimizes file size using Ghostscript.
    * Supports 'removeImages' option for maximum size reduction.

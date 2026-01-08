@@ -1,4 +1,5 @@
 import { PDFDocument } from 'pdf-lib';
+import pdf from 'pdf-parse';
 import { spawn } from 'child_process';
 import fs from 'fs/promises';
 import { statSync } from 'fs';
@@ -47,6 +48,17 @@ export class PdfService {
     copiedPages.forEach((page) => newPdf.addPage(page));
 
     return await newPdf.save();
+  }
+
+  /**
+   * Extracts text from a PDF file.
+   * @param inputPath - The file system path to the source PDF.
+   * @returns A Promise resolving to the extracted text.
+   */
+  async extractText(inputPath: string): Promise<string> {
+    const fileBuffer = await fs.readFile(inputPath);
+    const data = await pdf(fileBuffer);
+    return data.text;
   }
 
   /**
