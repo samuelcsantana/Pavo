@@ -1,24 +1,13 @@
-import express, { Application, Request, Response } from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import apiRoutes from './routes/api.routes';
+import 'express-async-errors';
+import { app } from './shared/infra/http/app';
+import { env } from './config/env';
+import { logger } from './shared/infra/logger';
 
-const app: Application = express();
-const PORT = process.env.PORT || 3000;
-
-app.use(morgan('dev'));
-
-app.use(cors());
-app.use(express.json());
-
-app.use('/api', apiRoutes);
-
-app.get('/', (req: Request, res: Response) => {
-  res.json({ status: 'PDF API Online 🚀', system: process.platform });
-});
+const PORT = env.PORT;
 
 const server = app.listen(PORT, () => {
-  console.log(`\n🔥 Server running on WSL at http://localhost:${PORT}`);
+  logger.info(`🔥 Server running on http://localhost:${PORT}`);
+  logger.info(`📚 Documentation available at http://localhost:${PORT}/api-docs`);
 });
 
 server.setTimeout(300000);
